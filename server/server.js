@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes");
 mongoose
-  .connect("mongodb+srv://dsu_db_user:dsu83448@cluster0.jeiy7mp.mongodb.net/")
+  .connect("")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.log(error));
 
