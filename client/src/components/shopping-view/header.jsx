@@ -1,5 +1,10 @@
-import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react"; 
-import { Link, useNavigate } from "react-router-dom";
+import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,24 +19,55 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser } from "@/store/auth-slice";
+import UserCartWrapper from "./cart-wrapper";
+import { useEffect, useState } from "react";
+import { fetchCartItems } from "@/store/shop/cart-slice";
+import { Label } from "../ui/label";
 
 function MenuItems() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  function handleNavigate(getCurrentMenuItem) {
+    sessionStorage.removeItem("filters");
+    const currentFilter =
+      getCurrentMenuItem.id !== "home" &&
+      getCurrentMenuItem.id !== "products" &&
+      getCurrentMenuItem.id !== "search"
+        ? {
+            category: [getCurrentMenuItem.id],
+          }
+        : null;
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+    location.pathname.includes("listing") && currentFilter !== null
+      ? setSearchParams(
+          new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
+        )
+      : navigate(getCurrentMenuItem.path);
+  }
+
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Link
+        <Label
+          onClick={() => handleNavigate(menuItem)}
+          className="text-sm font-medium cursor-pointer"
           key={menuItem.id}
-          to={menuItem.path}
-          className="text-black text-sm font-medium hover:text-blue-600 hover:bg-gray-100 px-2 py-1 rounded transition-colors duration-300"
         >
           {menuItem.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );
 }
+
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -39,19 +75,37 @@ function HeaderRightContent() {
     dispatch(logoutUser());
   }
 
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id));
+  }, [dispatch]);
+
+ 
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      {/* Cart Button with Stronger Fading Hover */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="bg-black text-white p-2 transition-all duration-500 hover:bg-gray-800 hover:opacity-60"
-      >
-        <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">User cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          onClick={() => setOpenCartSheet(true)}
+          variant="outline"
+          size="icon"
+          className="relative bg-black text-white transition-all duration-300 hover:bg-gray-800 hover:opacity-80"
+        >
+          <ShoppingCart className="w-6 h-6 text-white" />
+          <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
+            {cartItems?.items?.length || 0}
+          </span>
+          <span className="sr-only">User cart</span>
+        </Button>
+        <UserCartWrapper
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
+      </Sheet>
 
-      {/* Profile Avatar with Stronger Fading Hover */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="transition-all duration-500 hover:opacity-60 cursor-pointer">
@@ -62,29 +116,21 @@ function HeaderRightContent() {
             </Avatar>
           </div>
         </DropdownMenuTrigger>
-
         <DropdownMenuContent
-  align="start"
-  side="bottom"
-  sideOffset={4}
-  className="w-56 bg-white text-black shadow-md border border-gray-200"
-  portalled={false}
->
-
-          <DropdownMenuLabel className="text-sm font-semibold">
-            Logged in as {user?.userName}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator className="border-gray-300" />
-          <DropdownMenuItem
-            onClick={() => navigate("/shop/account")}
-            className="hover:bg-gray-100 rounded transition-colors duration-300"
-          >
+          align="start"
+          side="bottom"
+          sideOffset={4}
+          className="w-56 bg-white text-black shadow-md border border-gray-200"
+          portalled={false}
+        >
+          <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate("/shop/account")}>
             <UserCog className="mr-2 h-4 w-4" />
             Account
           </DropdownMenuItem>
-
           <div className="my-1 border-t border-gray-300"></div>
-
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handleLogout}
             className="hover:bg-gray-100 rounded transition-colors duration-300"
@@ -98,7 +144,6 @@ function HeaderRightContent() {
   );
 }
 
-
 function ShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -109,7 +154,6 @@ function ShoppingHeader() {
           <HousePlug className="h-6 w-6" />
           <span className="font-bold">Ecommerce</span>
         </Link>
-
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -123,16 +167,15 @@ function ShoppingHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-full max-w-xs bg-white">
             <MenuItems />
-            {isAuthenticated && <HeaderRightContent />}
+            <HeaderRightContent />
           </SheetContent>
         </Sheet>
-
         <div className="hidden lg:block">
           <MenuItems />
         </div>
 
         <div className="hidden lg:block">
-          {isAuthenticated && <HeaderRightContent />}
+          <HeaderRightContent />
         </div>
       </div>
     </header>

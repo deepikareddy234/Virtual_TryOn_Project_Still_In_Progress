@@ -61,8 +61,6 @@ export const addProductFormElements = [
       { id: "men", label: "Men" },
       { id: "women", label: "Women" },
       { id: "kids", label: "Kids" },
-      { id: "accessories", label: "Accessories" },
-      { id: "footwear", label: "Footwear" },
     ],
   },
   {
@@ -70,12 +68,12 @@ export const addProductFormElements = [
     name: "brand",
     componentType: "select",
     options: [
-      { id: "nike", label: "Nike" },
-      { id: "adidas", label: "Adidas" },
-      { id: "puma", label: "Puma" },
-      { id: "levi", label: "Levi's" },
-      { id: "zara", label: "Zara" },
-      { id: "h&m", label: "H&M" },
+      { id: "ajio", label: "Ajio" },
+    { id: "flipkart", label: "Flipkart" },
+    { id: "hm", label: "H&M" },
+    { id: "meesho", label: "Meesho" },
+    { id: "myntra", label: "Myntra" },
+    { id: "zara", label: "Zara" },
     ],
   },
   {
@@ -128,16 +126,6 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing",
   },
   {
-    id: "footwear",
-    label: "Footwear",
-    path: "/shop/listing",
-  },
-  {
-    id: "accessories",
-    label: "Accessories",
-    path: "/shop/listing",
-  },
-  {
     id: "search",
     label: "Search",
     path: "/shop/search",
@@ -148,17 +136,15 @@ export const categoryOptionsMap = {
   men: "Men",
   women: "Women",
   kids: "Kids",
-  accessories: "Accessories",
-  footwear: "Footwear",
 };
 
 export const brandOptionsMap = {
-  nike: "Nike",
-  adidas: "Adidas",
-  puma: "Puma",
-  levi: "Levi",
+  ajio: "Ajio",
+  flipkart: "Flipkart",
+  hm: "H&M",
+  meesho: "Meesho",
+  myntra: "Myntra",
   zara: "Zara",
-  "h&m": "H&M",
 };
 
 export const filterOptions = {
@@ -166,16 +152,14 @@ export const filterOptions = {
     { id: "men", label: "Men" },
     { id: "women", label: "Women" },
     { id: "kids", label: "Kids" },
-    { id: "accessories", label: "Accessories" },
-    { id: "footwear", label: "Footwear" },
   ],
   brand: [
-    { id: "nike", label: "Nike" },
-    { id: "adidas", label: "Adidas" },
-    { id: "puma", label: "Puma" },
-    { id: "levi", label: "Levi's" },
+    { id: "ajio", label: "Ajio" },
+    { id: "flipkart", label: "Flipkart" },
+    { id: "hm", label: "H&M" },
+    { id: "meesho", label: "Meesho" },
+    { id: "myntra", label: "Myntra" },
     { id: "zara", label: "Zara" },
-    { id: "h&m", label: "H&M" },
   ],
 };
 

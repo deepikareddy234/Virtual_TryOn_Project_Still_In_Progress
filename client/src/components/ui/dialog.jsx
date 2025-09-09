@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils"; // Or define your own utility function
+import { cn } from "@/lib/utils"; // Utility function for combining class names
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // Main dialog container
 const Dialog = DialogPrimitive.Root;
@@ -29,7 +30,7 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 // Main content area of the dialog
-const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
+const DialogContent = React.forwardRef(({ className, children, title = "Dialog", ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -40,7 +41,13 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
       )}
       {...props}
     >
+      {/* Accessibility: Visually hidden title for screen readers */}
+      <DialogPrimitive.Title asChild>
+        <VisuallyHidden>{title}</VisuallyHidden>
+      </DialogPrimitive.Title>
+
       {children}
+
       <DialogPrimitive.Close
         className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
       >
@@ -84,6 +91,7 @@ const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
+// Export all components for usage
 export {
   Dialog,
   DialogTrigger,
