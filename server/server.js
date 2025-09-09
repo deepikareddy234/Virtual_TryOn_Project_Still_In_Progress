@@ -12,8 +12,9 @@ const shopOrderRouter = require("./routes/shop/order-routes");
 const adminOrderRouter = require("./routes/admin/order-routes");
 const shopSearchRouter = require("./routes/shop/search-routes");
 const shopReviewRouter = require("./routes/shop/review-routes");
+//mongodb+srv://dsu_db_user:dsu83448@cluster0.jeiy7mp.mongodb.net/
 mongoose
-  .connect("mongodb+srv://dsu_db_user:dsu83448@cluster0.jeiy7mp.mongodb.net/")
+  .connect("")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.log(error));
 
